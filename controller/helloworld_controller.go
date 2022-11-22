@@ -1,60 +1,34 @@
 package controller
 
 import (
-	"log"
-	"net/http"
-
-	"github.com/Naithar01/CalmDownMan-funny-site-server/database"
-	"github.com/Naithar01/CalmDownMan-funny-site-server/models"
-	"github.com/gin-gonic/gin"
+	"github.com/Naithar01/CalmDownMan-funny-site-server/entity"
+	"github.com/Naithar01/CalmDownMan-funny-site-server/service"
 )
 
-func HelloWorld(c *gin.Context) {
-	c.JSON(http.StatusOK,
-		"HelloWorld",
-	)
+type HelloWorldController interface {
+	HelloWorld() string
+	GetAllWorld() []entity.HelloWorld
+	TestInsertDB() int64
 }
 
-func TestInsertDB(c *gin.Context) {
-	world := "world"
-	rs, err := database.Database.Exec("INSERT INTO helloworld(world) VALUES (?)", world)
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	id, err := rs.LastInsertId()
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"id": id,
-	})
+type helloWorldController struct {
+	helloWorldService service.HelloWorldService
 }
 
-func GetAllWorld(c *gin.Context) {
-	rows, err := database.Database.Query("SELECT id, world FROM helloworld")
-	defer rows.Close()
-
-	if err != nil {
-		log.Fatalln(err)
+func New(helloworldService service.HelloWorldService) HelloWorldController {
+	return &helloWorldController{
+		helloWorldService: helloworldService,
 	}
+}
 
-	// worlds := make([]models.HelloWorld, 0)
-	var worlds []models.HelloWorld
+func (c helloWorldController) HelloWorld() string {
+	return c.helloWorldService.HelloWorld()
+}
 
-	for rows.Next() {
-		var world models.HelloWorld
-		rows.Scan(&world.Id, &world.World)
-		worlds = append(worlds, world)
-	}
+func (c helloWorldController) GetAllWorld() []entity.HelloWorld {
+	return c.helloWorldService.GetAllWorld()
+}
 
-	if rows.Err(); err != nil {
-		log.Fatalln(err)
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"worlds": worlds,
-	})
-
+func (c helloWorldController) TestInsertDB() int64 {
+	return c.helloWorldService.TestInsertDB()
 }
