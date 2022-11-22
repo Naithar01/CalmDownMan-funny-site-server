@@ -9,6 +9,7 @@ func InitialApp() *gin.Engine {
 	app := gin.Default()
 
 	app.GET("/", controller.HelloWorld)
+	app.GET("/worlds", controller.GetAllWorld)
 	app.GET("/test/db", controller.TestInsertDB)
 
 	return app

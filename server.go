@@ -10,5 +10,7 @@ func main() {
 
 	database.ConnectDB()
 
+	defer database.Database.Close()
+
 	app.Run() // localhost 8080
 }
