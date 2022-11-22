@@ -13,3 +13,8 @@
 
 - [Gin - official repository](https://github.com/gin-gonic/gin#quick-start)
 - [Gin - Crud example](https://gist.github.com/rsj217/26492af115a083876570f003c64df118#file-golang-gin-mysql-curd-go-L99)
+
+### Library Framework
+
+- [Gin](https://pkg.go.dev/github.com/gin-gonic/gin@v1.8.1#section-readme)
+- [Mysql](https://pkg.go.dev/github.com/go-sql-driver/mysql@v1.6.0#section-readme)
