@@ -22,10 +22,8 @@ func InitialApp() *gin.Engine {
 	app.GET("/worlds", func(c *gin.Context) {
 		c.JSON(http.StatusOK, helloWorldController.GetAllWorld())
 	})
-
 	app.POST("/test/db", func(c *gin.Context) {
 		c.JSON(http.StatusOK, helloWorldController.TestInsertDB())
 	})
-
 	return app
 }

@@ -2,6 +2,7 @@ package service
 
 import (
 	"log"
+	"time"
 
 	"github.com/Naithar01/CalmDownMan-funny-site-server/database"
 	"github.com/Naithar01/CalmDownMan-funny-site-server/entity"
@@ -9,12 +10,24 @@ import (
 
 type HelloWorldService interface {
 	HelloWorld() string
-	GetAllWorld() []entity.HelloWorld
+	GetAllWorld() []GetAllWorldRequest
 	TestInsertDB() int64
 }
 
 type helloWorldService struct {
 	worlds []entity.HelloWorld
+}
+
+type GetAllWorldRequest struct {
+	Id        int       `json:"id"`
+	World     string    `json:"world"`
+	Create_At time.Time `json:"create_at"`
+}
+
+func CreateGetAllWorldResponse(world entity.HelloWorld) GetAllWorldRequest {
+	return GetAllWorldRequest{
+		Id: world.Id, World: world.World, Create_At: world.Create_At,
+	}
 }
 
 func New() HelloWorldService {
@@ -27,8 +40,8 @@ func (s helloWorldService) HelloWorld() string {
 	return "Hello World"
 }
 
-func (s helloWorldService) GetAllWorld() []entity.HelloWorld {
-	rows, err := database.Database.Query("SELECT id, world FROM helloworld")
+func (s helloWorldService) GetAllWorld() []GetAllWorldRequest {
+	rows, err := database.Database.Query("SELECT id, world, create_at FROM helloworld")
 	defer rows.Close()
 
 	if err != nil {
@@ -36,12 +49,13 @@ func (s helloWorldService) GetAllWorld() []entity.HelloWorld {
 	}
 
 	// worlds := make([]entity.HelloWorld, 0)
-	var worlds []entity.HelloWorld
+	var worlds []GetAllWorldRequest
 
 	for rows.Next() {
 		var world entity.HelloWorld
-		rows.Scan(&world.Id, &world.World)
-		worlds = append(worlds, world)
+		rows.Scan(&world.Id, &world.World, &world.Create_At)
+		ResponseWorld := CreateGetAllWorldResponse(world)
+		worlds = append(worlds, ResponseWorld)
 	}
 
 	if rows.Err(); err != nil {
