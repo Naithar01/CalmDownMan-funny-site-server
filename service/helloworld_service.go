@@ -19,14 +19,14 @@ type helloWorldService struct {
 }
 
 type GetAllWorldRequest struct {
-	Id        int       `json:"id"`
-	World     string    `json:"world"`
-	Create_At time.Time `json:"create_at"`
+	Id         int       `json:"id"`
+	World      string    `json:"world"`
+	Created_At time.Time `json:"created_at"`
 }
 
 func CreateGetAllWorldResponse(world entity.HelloWorld) GetAllWorldRequest {
 	return GetAllWorldRequest{
-		Id: world.Id, World: world.World, Create_At: world.Create_At,
+		Id: world.Id, World: world.World, Created_At: world.Created_At,
 	}
 }
 
@@ -53,7 +53,7 @@ func (s helloWorldService) GetAllWorld() []GetAllWorldRequest {
 
 	for rows.Next() {
 		var world entity.HelloWorld
-		rows.Scan(&world.Id, &world.World, &world.Create_At)
+		rows.Scan(&world.Id, &world.World, &world.Created_At)
 		ResponseWorld := CreateGetAllWorldResponse(world)
 		worlds = append(worlds, ResponseWorld)
 	}
