@@ -58,7 +58,7 @@ func (s helloWorldService) GetAllWorld() []GetAllWorldRequest {
 		worlds = append(worlds, ResponseWorld)
 	}
 
-	if rows.Err(); err != nil {
+	if err := rows.Err(); err != nil {
 		log.Fatalln(err)
 	}
 

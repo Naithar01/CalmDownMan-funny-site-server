@@ -34,5 +34,12 @@ func InitialApp() *gin.Engine {
 		})
 	}
 
+	post := app.Group("/api/post")
+	{
+		post.GET("/", func(c *gin.Context) {
+			c.JSON(http.StatusOK, postController.GetAllPost())
+		})
+	}
+
 	return app
 }
