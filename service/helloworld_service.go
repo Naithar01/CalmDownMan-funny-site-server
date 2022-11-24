@@ -41,7 +41,7 @@ func (s helloWorldService) HelloWorld() string {
 }
 
 func (s helloWorldService) GetAllWorld() []GetAllWorldRequest {
-	rows, err := database.Database.Query("SELECT id, world, create_at FROM helloworld")
+	rows, err := database.Database.Query("SELECT id, world, created_at FROM helloworld")
 	defer rows.Close()
 
 	if err != nil {

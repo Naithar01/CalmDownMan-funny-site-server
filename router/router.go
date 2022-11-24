@@ -11,19 +11,28 @@ import (
 var (
 	helloWorldService    service.HelloWorldService       = service.New()
 	helloWorldController controller.HelloWorldController = controller.New(helloWorldService)
+	// Post
+	postService    service.PostService       = service.NewPostService()
+	postController controller.PostController = controller.NewPostController(postService)
 )
 
 func InitialApp() *gin.Engine {
 	app := gin.Default()
 
-	app.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, helloWorldController.HelloWorld())
-	})
-	app.GET("/worlds", func(c *gin.Context) {
-		c.JSON(http.StatusOK, helloWorldController.GetAllWorld())
-	})
-	app.POST("/test/db", func(c *gin.Context) {
-		c.JSON(http.StatusOK, helloWorldController.TestInsertDB())
-	})
+	// group routes
+	// localhost:4000/api/hello
+	hello := app.Group("/api/hello")
+	{
+		hello.GET("/", func(c *gin.Context) {
+			c.JSON(http.StatusOK, helloWorldController.HelloWorld())
+		})
+		hello.GET("/worlds", func(c *gin.Context) {
+			c.JSON(http.StatusOK, helloWorldController.GetAllWorld())
+		})
+		hello.POST("/", func(c *gin.Context) {
+			c.JSON(http.StatusOK, helloWorldController.TestInsertDB())
+		})
+	}
+
 	return app
 }
