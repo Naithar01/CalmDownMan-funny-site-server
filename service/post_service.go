@@ -5,10 +5,12 @@ import (
 
 	"github.com/Naithar01/CalmDownMan-funny-site-server/database"
 	"github.com/Naithar01/CalmDownMan-funny-site-server/entity"
+	"github.com/Naithar01/CalmDownMan-funny-site-server/entity/dto"
 )
 
 type PostService interface {
 	GetAllPost() []entity.Post
+	CreatePost(dto.CreatePostDto) (int, error)
 }
 
 type postService struct {
@@ -43,4 +45,20 @@ func (p postService) GetAllPost() []entity.Post {
 	}
 
 	return posts
+}
+
+func (p postService) CreatePost(post dto.CreatePostDto) (int, error) {
+	c_post, err := database.Database.Exec("INSERT INTO post (title, content, category_id) VALUES (?, ?, ?)", post.Title, post.Content, post.Category_id)
+
+	if err != nil {
+		return 0, err
+	}
+
+	Id, err := c_post.LastInsertId()
+
+	if err != nil {
+		return 0, err
+	}
+
+	return int(Id), nil
 }

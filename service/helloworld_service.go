@@ -69,6 +69,7 @@ func (s helloWorldService) GetAllWorld() []GetAllWorldRequest {
 func (s helloWorldService) TestInsertDB() int64 {
 	world := "world"
 	rs, err := database.Database.Exec("INSERT INTO helloworld(world) VALUES (?)", world)
+
 	if err != nil {
 		log.Fatalln(err)
 	}

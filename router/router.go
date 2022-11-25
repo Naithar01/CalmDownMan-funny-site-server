@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/Naithar01/CalmDownMan-funny-site-server/controller"
+	"github.com/Naithar01/CalmDownMan-funny-site-server/entity/dto"
 	"github.com/Naithar01/CalmDownMan-funny-site-server/service"
 	"github.com/gin-gonic/gin"
 )
@@ -38,6 +39,21 @@ func InitialApp() *gin.Engine {
 	{
 		post.GET("/", func(c *gin.Context) {
 			c.JSON(http.StatusOK, postController.GetAllPost())
+		})
+		post.POST("/", func(c *gin.Context) {
+			var post dto.CreatePostDto
+
+			if err := c.BindJSON(&post); err != nil {
+				c.JSON(http.StatusBadRequest, err.Error())
+			}
+
+			create_post_id, err := postController.CreatePost(post)
+
+			if err != nil {
+				c.JSON(http.StatusBadRequest, err.Error())
+			}
+			c.JSON(http.StatusOK, create_post_id)
+
 		})
 	}
 
