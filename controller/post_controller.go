@@ -10,6 +10,7 @@ type PostController interface {
 	GetAllPost() []entity.Post
 	CreatePost(dto.CreatePostDto) (int, error)
 	UpdatePost(id int, post dto.UpdatePostDto) (int64, error)
+	DeletePost(id int) (int64, error)
 }
 
 type postController struct {
@@ -32,4 +33,8 @@ func (p postController) CreatePost(post dto.CreatePostDto) (int, error) {
 
 func (p postController) UpdatePost(id int, post dto.UpdatePostDto) (int64, error) {
 	return p.postService.UpdatePost(id, post)
+}
+
+func (p postController) DeletePost(id int) (int64, error) {
+	return p.postService.DeletePost(id)
 }

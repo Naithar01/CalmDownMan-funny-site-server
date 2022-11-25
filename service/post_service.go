@@ -12,6 +12,7 @@ type PostService interface {
 	GetAllPost() []entity.Post
 	CreatePost(dto.CreatePostDto) (int, error)
 	UpdatePost(id int, post dto.UpdatePostDto) (int64, error)
+	DeletePost(id int) (int64, error)
 }
 
 type postService struct {
@@ -87,4 +88,14 @@ func (p postService) UpdatePost(id int, post dto.UpdatePostDto) (int64, error) {
 	}
 
 	return int64(id), nil
+}
+
+func (p postService) DeletePost(id int) (int64, error) {
+	rs, err := database.Database.Exec("DELETE FROM post WHERE id = ?", id)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return rs.RowsAffected()
 }

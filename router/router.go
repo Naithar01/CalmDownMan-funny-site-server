@@ -79,6 +79,22 @@ func InitialApp() *gin.Engine {
 
 			c.JSON(http.StatusOK, updated_post_id)
 		})
+		post.DELETE("/:id", func(c *gin.Context) {
+			id := c.Param("id")
+			Id, err := strconv.Atoi(id)
+
+			if err != nil {
+				c.JSON(http.StatusBadRequest, err.Error())
+			}
+
+			delete_post, err := postController.DeletePost(Id)
+
+			if err != nil {
+				c.JSON(http.StatusBadRequest, err.Error())
+			}
+
+			c.JSON(http.StatusOK, delete_post)
+		})
 	}
 
 	return app
