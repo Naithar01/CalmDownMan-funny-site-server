@@ -2,6 +2,7 @@ package router
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/Naithar01/CalmDownMan-funny-site-server/controller"
 	"github.com/Naithar01/CalmDownMan-funny-site-server/entity/dto"
@@ -54,6 +55,29 @@ func InitialApp() *gin.Engine {
 			}
 			c.JSON(http.StatusOK, create_post_id)
 
+		})
+		post.PATCH("/:id", func(c *gin.Context) {
+			var post dto.UpdatePostDto
+
+			if err := c.BindJSON(&post); err != nil {
+				c.JSON(http.StatusBadRequest, err.Error())
+			}
+
+			id := c.Param("id")
+
+			Id, err := strconv.Atoi(id)
+
+			if err != nil {
+				c.JSON(http.StatusBadRequest, err.Error())
+			}
+
+			updated_post_id, err := postController.UpdatePost(Id, post)
+
+			if err != nil {
+				c.JSON(http.StatusBadRequest, err.Error())
+			}
+
+			c.JSON(http.StatusOK, updated_post_id)
 		})
 	}
 

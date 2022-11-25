@@ -11,6 +11,7 @@ import (
 type PostService interface {
 	GetAllPost() []entity.Post
 	CreatePost(dto.CreatePostDto) (int, error)
+	UpdatePost(id int, post dto.UpdatePostDto) (int64, error)
 }
 
 type postService struct {
@@ -61,4 +62,29 @@ func (p postService) CreatePost(post dto.CreatePostDto) (int, error) {
 	}
 
 	return int(Id), nil
+}
+
+func (p postService) UpdatePost(id int, post dto.UpdatePostDto) (int64, error) {
+	if len(post.Title) != 0 {
+		_, err := database.Database.Exec("UPDATE post SET title = ? WHERE id = ?", post.Title, id)
+		if err != nil {
+			return 0, err
+		}
+	}
+
+	if len(post.Content) != 0 {
+		_, err := database.Database.Exec("UPDATE post SET content = ? WHERE id = ?", post.Content, id)
+		if err != nil {
+			return 0, err
+		}
+	}
+
+	if post.Category_id != 0 {
+		_, err := database.Database.Exec("UPDATE post SET category_id = ? WHERE id = ?", post.Category_id, id)
+		if err != nil {
+			return 0, err
+		}
+	}
+
+	return int64(id), nil
 }
