@@ -50,7 +50,7 @@ func (p postService) GetAllPost() []entity.Post {
 }
 
 func (p postService) CreatePost(post dto.CreatePostDto) (int, error) {
-	c_post, err := database.Database.Exec("INSERT INTO post (title, content, category_id) VALUES (?, ?, ?)", post.Title, post.Content, post.Category_id)
+	c_post, err := database.Database.Exec("INSERT INTO post (title, content, category_id, author_id) VALUES (?, ?, ?, ?)", post.Title, post.Content, post.Category_id, post.Author_id)
 
 	if err != nil {
 		return 0, err
