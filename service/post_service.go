@@ -38,7 +38,7 @@ func (p postService) GetAllPost() []entity.Post {
 
 	for rows.Next() {
 		var post entity.Post
-		rows.Scan(&post.Id, &post.Title, &post.Content, &post.Category_id, &post.Created_At, &post.Updated_At)
+		rows.Scan(&post.Id, &post.Title, &post.Content, &post.Category_id, &post.Author_id, &post.Created_At, &post.Updated_At)
 		posts = append(posts, post)
 	}
 

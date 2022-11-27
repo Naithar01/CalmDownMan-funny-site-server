@@ -16,6 +16,9 @@ var (
 	// Post
 	postService    service.PostService       = service.NewPostService()
 	postController controller.PostController = controller.NewPostController(postService)
+	// User
+	userService    service.UserService       = service.NewUserService()
+	userController controller.UserController = controller.NewUserController(userService)
 )
 
 func InitialApp() *gin.Engine {
@@ -94,6 +97,19 @@ func InitialApp() *gin.Engine {
 			}
 
 			c.JSON(http.StatusOK, delete_post)
+		})
+	}
+
+	user := app.Group("/api/user")
+	{
+		user.GET("/", func(c *gin.Context) {
+			users, err := userService.GetAllUser()
+
+			if err != nil {
+				c.JSON(http.StatusBadRequest, err.Error())
+			}
+
+			c.JSON(http.StatusOK, users)
 		})
 	}
 
