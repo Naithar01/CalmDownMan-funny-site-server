@@ -7,7 +7,7 @@ import (
 )
 
 type PostController interface {
-	GetAllPost() []entity.Post
+	GetAllPost() ([]entity.Post, error)
 	CreatePost(dto.CreatePostDto) (int, error)
 	UpdatePost(id int, post dto.UpdatePostDto) (int64, error)
 	DeletePost(id int) (int64, error)
@@ -23,7 +23,7 @@ func NewPostController(postService service.PostService) PostController {
 	}
 }
 
-func (p postController) GetAllPost() []entity.Post {
+func (p postController) GetAllPost() ([]entity.Post, error) {
 	return p.postService.GetAllPost()
 }
 

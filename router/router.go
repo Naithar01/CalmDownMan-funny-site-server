@@ -42,7 +42,13 @@ func InitialApp() *gin.Engine {
 	post := app.Group("/api/post")
 	{
 		post.GET("/", func(c *gin.Context) {
-			c.JSON(http.StatusOK, postController.GetAllPost())
+			posts, err := postController.GetAllPost()
+
+			if err != nil {
+				c.JSON(http.StatusBadRequest, err.Error())
+			}
+
+			c.JSON(http.StatusOK, posts)
 		})
 		post.POST("/", func(c *gin.Context) {
 			var post dto.CreatePostDto
@@ -111,6 +117,23 @@ func InitialApp() *gin.Engine {
 
 			c.JSON(http.StatusOK, users)
 		})
+
+		user.POST("/", func(c *gin.Context) {
+			var user dto.CreateUserDto
+
+			if err := c.BindJSON(&user); err != nil {
+				c.JSON(http.StatusBadRequest, err.Error())
+			}
+
+			create_user_id, err := userController.CreateUser(user)
+
+			if err != nil {
+				c.JSON(http.StatusBadRequest, err.Error())
+			}
+			c.JSON(http.StatusOK, create_user_id)
+
+		})
+
 	}
 
 	return app

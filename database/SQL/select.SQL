@@ -13,3 +13,4 @@ SELECT * FROM ngletutor.post WHERE category_id = 2 -- category_id is foreign key
 
 SELECT id, create_at FROM ngletutor.post WHERE id = 1
 
+SELECT id, username FROM ngletutor.user

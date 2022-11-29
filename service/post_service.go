@@ -1,15 +1,13 @@
 package service
 
 import (
-	"log"
-
 	"github.com/Naithar01/CalmDownMan-funny-site-server/database"
 	"github.com/Naithar01/CalmDownMan-funny-site-server/entity"
 	"github.com/Naithar01/CalmDownMan-funny-site-server/entity/dto"
 )
 
 type PostService interface {
-	GetAllPost() []entity.Post
+	GetAllPost() ([]entity.Post, error)
 	CreatePost(dto.CreatePostDto) (int, error)
 	UpdatePost(id int, post dto.UpdatePostDto) (int64, error)
 	DeletePost(id int) (int64, error)
@@ -25,13 +23,13 @@ func NewPostService() PostService {
 	}
 }
 
-func (p postService) GetAllPost() []entity.Post {
+func (p postService) GetAllPost() ([]entity.Post, error) {
 	rows, err := database.Database.Query("SELECT * FROM post")
 
 	defer rows.Close()
 
 	if err != nil {
-		log.Fatalln(err.Error())
+		return []entity.Post{}, err
 	}
 
 	var posts []entity.Post
@@ -43,10 +41,11 @@ func (p postService) GetAllPost() []entity.Post {
 	}
 
 	if err := rows.Err(); err != nil {
-		log.Fatalln(err)
+
 	}
 
-	return posts
+	return []entity.Post{}, err
+
 }
 
 func (p postService) CreatePost(post dto.CreatePostDto) (int, error) {
