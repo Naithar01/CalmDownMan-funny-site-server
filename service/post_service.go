@@ -8,7 +8,7 @@ import (
 
 type PostService interface {
 	GetAllPost() ([]entity.Post, error)
-	CreatePost(dto.CreatePostDto) (int, error)
+	CreatePost(post dto.CreatePostDto, userid int) (int, error)
 	UpdatePost(id int, post dto.UpdatePostDto) (int64, error)
 	DeletePost(id int) (int64, error)
 }
@@ -48,8 +48,9 @@ func (p postService) GetAllPost() ([]entity.Post, error) {
 
 }
 
-func (p postService) CreatePost(post dto.CreatePostDto) (int, error) {
-	c_post, err := database.Database.Exec("INSERT INTO post (title, content, category_id, author_id) VALUES (?, ?, ?, ?)", post.Title, post.Content, post.Category_id, post.Author_id)
+func (p postService) CreatePost(post dto.CreatePostDto, userid int) (int, error) {
+	// 22 - 12 - 3 token payload 로 authord id 저장
+	c_post, err := database.Database.Exec("INSERT INTO post (title, content, category_id, author_id) VALUES (?, ?, ?, ?)", post.Title, post.Content, post.Category_id, userid) //  post.Author_id
 
 	if err != nil {
 		return 0, err

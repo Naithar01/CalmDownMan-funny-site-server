@@ -1,6 +1,7 @@
 package action
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/Naithar01/CalmDownMan-funny-site-server/entity"
@@ -8,6 +9,12 @@ import (
 	"github.com/golang-jwt/jwt"
 	"golang.org/x/crypto/bcrypt"
 )
+
+type Claims struct {
+	jwt.StandardClaims
+	Userid   int
+	Username string
+}
 
 func UserRegisterHashPassWord(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 3)
@@ -35,8 +42,9 @@ func UserLoginCreateJwt(userInfo entity.User) (string, error) {
 	aToken := jwt.New(jwt.SigningMethodHS256)
 	claims := aToken.Claims.(jwt.MapClaims)
 
-	claims["username"] = userInfo.Username
-	claims["exp"] = time.Now().Add(time.Minute * 20).Unix()
+	claims["Userid"] = userInfo.Id
+	claims["Username"] = userInfo.Username
+	claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
 
 	tk, err := aToken.SignedString(jwtKey)
 
@@ -44,9 +52,22 @@ func UserLoginCreateJwt(userInfo entity.User) (string, error) {
 		return "", err
 	}
 
-	return tk, err
+	return tk, nil
 }
 
 func UserLoginSaveJwtCookie(c *gin.Context, jwt_token string) {
 	c.SetCookie("access-jwt-token", jwt_token, 3600, "/", "localhost", false, true)
+}
+
+func UserJwtTokenParse(tk string) int {
+	jwtKey := []byte("JWT_key")
+
+	var claims Claims
+	jwt.ParseWithClaims(tk, &claims, func(t *jwt.Token) (interface{}, error) {
+		return jwtKey, nil
+	})
+
+	fmt.Println(claims.Userid)
+
+	return claims.Userid
 }

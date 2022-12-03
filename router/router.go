@@ -6,6 +6,7 @@ import (
 
 	"github.com/Naithar01/CalmDownMan-funny-site-server/action"
 	"github.com/Naithar01/CalmDownMan-funny-site-server/controller"
+	"github.com/Naithar01/CalmDownMan-funny-site-server/entity"
 	"github.com/Naithar01/CalmDownMan-funny-site-server/entity/dto"
 	"github.com/Naithar01/CalmDownMan-funny-site-server/middleware"
 	"github.com/Naithar01/CalmDownMan-funny-site-server/service"
@@ -51,21 +52,33 @@ func InitialApp() *gin.Engine {
 				c.JSON(http.StatusBadRequest, err.Error())
 			}
 
-			c.JSON(http.StatusOK, posts)
+			c.JSON(http.StatusOK, map[string][]entity.Post{
+				"datas": posts,
+			})
 		})
 		post.POST("/", func(c *gin.Context) {
 			var post dto.CreatePostDto
+
+			user_tk, err := c.Cookie("access-jwt-token")
+
+			if err != nil {
+				c.JSON(http.StatusBadRequest, err.Error())
+			}
+
+			user_id := action.UserJwtTokenParse(user_tk)
 
 			if err := c.BindJSON(&post); err != nil {
 				c.JSON(http.StatusBadRequest, err.Error())
 			}
 
-			create_post_id, err := postController.CreatePost(post)
+			create_post_id, err := postController.CreatePost(post, user_id)
 
 			if err != nil {
 				c.JSON(http.StatusBadRequest, err.Error())
 			}
-			c.JSON(http.StatusOK, create_post_id)
+			c.JSON(http.StatusOK, map[string]int{
+				"created_post_id": create_post_id,
+			})
 
 		})
 		post.PATCH("/:id", func(c *gin.Context) {
@@ -89,7 +102,9 @@ func InitialApp() *gin.Engine {
 				c.JSON(http.StatusBadRequest, err.Error())
 			}
 
-			c.JSON(http.StatusOK, updated_post_id)
+			c.JSON(http.StatusOK, map[string]int{
+				"updated_post_id": int(updated_post_id),
+			})
 		})
 		post.DELETE("/:id", func(c *gin.Context) {
 			id := c.Param("id")
@@ -105,7 +120,9 @@ func InitialApp() *gin.Engine {
 				c.JSON(http.StatusBadRequest, err.Error())
 			}
 
-			c.JSON(http.StatusOK, delete_post)
+			c.JSON(http.StatusOK, map[string]int{
+				"deleted_post": int(delete_post),
+			})
 		})
 	}
 
@@ -118,7 +135,9 @@ func InitialApp() *gin.Engine {
 				c.JSON(http.StatusBadRequest, err.Error())
 			}
 
-			c.JSON(http.StatusOK, users)
+			c.JSON(http.StatusOK, map[string][]entity.User{
+				"users": users,
+			})
 		})
 
 		user.POST("/", func(c *gin.Context) {
@@ -133,7 +152,9 @@ func InitialApp() *gin.Engine {
 			if err != nil {
 				c.JSON(http.StatusBadRequest, err.Error())
 			}
-			c.JSON(http.StatusOK, create_user_id)
+			c.JSON(http.StatusOK, map[string]int{
+				"created_user_id": create_user_id,
+			})
 
 		})
 
@@ -152,7 +173,11 @@ func InitialApp() *gin.Engine {
 
 			action.UserLoginSaveJwtCookie(c, user_jwt)
 
-			c.JSON(http.StatusOK, user_jwt)
+			action.UserJwtTokenParse(user_jwt)
+
+			c.JSON(http.StatusOK, map[string]string{
+				"jwt": user_jwt,
+			})
 
 		})
 
