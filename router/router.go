@@ -4,8 +4,10 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/Naithar01/CalmDownMan-funny-site-server/action"
 	"github.com/Naithar01/CalmDownMan-funny-site-server/controller"
 	"github.com/Naithar01/CalmDownMan-funny-site-server/entity/dto"
+	"github.com/Naithar01/CalmDownMan-funny-site-server/middleware"
 	"github.com/Naithar01/CalmDownMan-funny-site-server/service"
 	"github.com/gin-gonic/gin"
 )
@@ -40,6 +42,7 @@ func InitialApp() *gin.Engine {
 	}
 
 	post := app.Group("/api/post")
+	post.Use(middleware.UserJwtCheckMiddleware)
 	{
 		post.GET("/", func(c *gin.Context) {
 			posts, err := postController.GetAllPost()
@@ -131,6 +134,25 @@ func InitialApp() *gin.Engine {
 				c.JSON(http.StatusBadRequest, err.Error())
 			}
 			c.JSON(http.StatusOK, create_user_id)
+
+		})
+
+		user.POST("/login", func(c *gin.Context) {
+			var user dto.LoginUserDto
+
+			if err := c.BindJSON(&user); err != nil {
+				c.JSON(http.StatusBadRequest, err.Error())
+			}
+
+			user_jwt, err := userController.LoginUser(user)
+
+			if err != nil {
+				c.JSON(http.StatusBadRequest, err.Error())
+			}
+
+			action.UserLoginSaveJwtCookie(c, user_jwt)
+
+			c.JSON(http.StatusOK, user_jwt)
 
 		})
 

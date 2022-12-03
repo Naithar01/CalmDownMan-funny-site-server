@@ -9,6 +9,7 @@ import (
 type UserController interface {
 	GetAllUser() ([]entity.User, error)
 	CreateUser(user dto.CreateUserDto) (int, error)
+	LoginUser(userInfo dto.LoginUserDto) (string, error)
 }
 
 type userController struct {
@@ -28,4 +29,8 @@ func (u userController) GetAllUser() ([]entity.User, error) {
 // Register
 func (u userController) CreateUser(user dto.CreateUserDto) (int, error) {
 	return u.userService.CreateUser(user)
+}
+
+func (u userController) LoginUser(userInfo dto.LoginUserDto) (string, error) {
+	return u.userService.LoginUser(userInfo)
 }

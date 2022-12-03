@@ -1,6 +1,8 @@
 package service
 
 import (
+	"errors"
+
 	"github.com/Naithar01/CalmDownMan-funny-site-server/action"
 	"github.com/Naithar01/CalmDownMan-funny-site-server/database"
 	"github.com/Naithar01/CalmDownMan-funny-site-server/entity"
@@ -10,6 +12,7 @@ import (
 type UserService interface {
 	GetAllUser() ([]entity.User, error)
 	CreateUser(user dto.CreateUserDto) (int, error)
+	LoginUser(userInfo dto.LoginUserDto) (string, error)
 }
 
 type userService struct {
@@ -64,4 +67,30 @@ func (u userService) CreateUser(user dto.CreateUserDto) (int, error) {
 	}
 
 	return int(Id), nil
+}
+
+// return jwt token
+func (c userService) LoginUser(userInfo dto.LoginUserDto) (string, error) {
+	user := database.Database.QueryRow("SELECT * FROM user WHERE username = (?)", userInfo.Username)
+
+	var check_user_info entity.User
+	err := user.Scan(&check_user_info.Id, &check_user_info.Username, &check_user_info.Password, &check_user_info.Created_At, &check_user_info.Updated_At)
+
+	if err != nil {
+		return "Error", err
+	}
+
+	checkLogin := action.UserLoginCheckPassword(userInfo.Password, check_user_info.Password)
+
+	if checkLogin {
+		jwt, err := action.UserLoginCreateJwt(check_user_info)
+
+		if err != nil {
+			return "Error", err
+		}
+
+		return jwt, nil
+	}
+
+	return "Error", errors.New("Error")
 }

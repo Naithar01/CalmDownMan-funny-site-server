@@ -41,10 +41,10 @@ func (p postService) GetAllPost() ([]entity.Post, error) {
 	}
 
 	if err := rows.Err(); err != nil {
-
+		return []entity.Post{}, err
 	}
 
-	return []entity.Post{}, err
+	return posts, nil
 
 }
 
