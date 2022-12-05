@@ -1,7 +1,14 @@
-# CalmDownman website 
+# CalmDownman website
 
-1. [a](https://www.youtube.com/watch?v=ZkWQgpgCJ4k&t=400s)
-2. [b](https://www.youtube.com/watch?v=ZkWQgpgCJ4k&t=390s)
+### -- 
+1. Backend - Go (gin)
+2. Frontend - React
+3. Gui - Go (fyne)
+
+1. [Example Video 1](https://www.youtube.com/watch?v=ZkWQgpgCJ4k&t=400s)
+2. [Example Video 2](https://www.youtube.com/watch?v=ZkWQgpgCJ4k&t=390s)
+
+### -- 
 
 ## World Memo file 
 
