@@ -1,7 +1,6 @@
 package action
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/Naithar01/CalmDownMan-funny-site-server/entity"
@@ -56,6 +55,7 @@ func UserLoginCreateJwt(userInfo entity.User) (string, error) {
 }
 
 func UserLoginSaveJwtCookie(c *gin.Context, jwt_token string) {
+	// http only true
 	c.SetCookie("access-jwt-token", jwt_token, 3600, "/", "localhost", false, true)
 }
 
@@ -66,8 +66,6 @@ func UserJwtTokenParse(tk string) int {
 	jwt.ParseWithClaims(tk, &claims, func(t *jwt.Token) (interface{}, error) {
 		return jwtKey, nil
 	})
-
-	fmt.Println(claims.Userid)
 
 	return claims.Userid
 }

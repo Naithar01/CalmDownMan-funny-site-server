@@ -10,6 +10,7 @@ import (
 	"github.com/Naithar01/CalmDownMan-funny-site-server/entity/dto"
 	"github.com/Naithar01/CalmDownMan-funny-site-server/middleware"
 	"github.com/Naithar01/CalmDownMan-funny-site-server/service"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -27,6 +28,9 @@ var (
 func InitialApp() *gin.Engine {
 	app := gin.Default()
 
+	// Cors
+	app.Use(cors.Default())
+
 	// group routes
 	// localhost:4000/api/hello
 	hello := app.Group("/api/hello")
@@ -43,7 +47,7 @@ func InitialApp() *gin.Engine {
 	}
 
 	post := app.Group("/api/post")
-	post.Use(middleware.UserJwtCheckMiddleware)
+	// post.Use(middleware.UserJwtCheckMiddleware)
 	{
 		post.GET("/", func(c *gin.Context) {
 			posts, err := postController.GetAllPost()
@@ -56,7 +60,7 @@ func InitialApp() *gin.Engine {
 				"datas": posts,
 			})
 		})
-		post.POST("/", func(c *gin.Context) {
+		post.POST("/", middleware.UserJwtCheckMiddleware, func(c *gin.Context) {
 			var post dto.CreatePostDto
 
 			user_tk, err := c.Cookie("access-jwt-token")
@@ -172,8 +176,6 @@ func InitialApp() *gin.Engine {
 			}
 
 			action.UserLoginSaveJwtCookie(c, user_jwt)
-
-			action.UserJwtTokenParse(user_jwt)
 
 			c.JSON(http.StatusOK, map[string]string{
 				"jwt": user_jwt,
