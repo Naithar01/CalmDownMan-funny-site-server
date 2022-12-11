@@ -11,3 +11,8 @@ type UpdatePostDto struct {
 	Content     string `json:"content"`
 	Category_id int    `json:"category_id"`
 }
+
+type FindPostQuery struct {
+	Category string `json:"category"`
+	Postid   int    `json:"postid"`
+}

@@ -11,6 +11,7 @@ type PostService interface {
 	CreatePost(post dto.CreatePostDto, userid int) (int, error)
 	UpdatePost(id int, post dto.UpdatePostDto) (int64, error)
 	DeletePost(id int) (int64, error)
+	FindPost(category, postid string) (entity.PostList, error)
 }
 
 type postService struct {
@@ -42,7 +43,7 @@ func (p postService) GetAllPost() ([]entity.PostList, error) {
 		var author entity.PostList_Author
 
 		rows.Scan(&check_post.Id, &check_post.Title, &check_post.Content, &check_post.Category_id, &check_post.Author_id, &check_post.Created_At, &check_post.Updated_At)
-		
+
 		category.GetCategoryInfo(check_post.Category_id)
 		author.GetCategoryInfo(check_post.Author_id)
 
@@ -115,4 +116,14 @@ func (p postService) DeletePost(id int) (int64, error) {
 	}
 
 	return rs.RowsAffected()
+}
+func (p postService) FindPost(category, postid string) (entity.PostList, error) {
+	var findPost entity.PostList
+	err := database.Database.QueryRow("SELECT p.id, p.title, p.content,p.created_at, p.updated_at ,c.id ,c.title, u.id, u.username FROM post AS p INNER JOIN category AS c ON p.category_id = c.id  INNER JOIN user AS u ON p.author_id = u.id  WHERE p.id = ? AND c.title = ? ", postid, category).Scan(&findPost.Id, &findPost.Title, &findPost.Content, &findPost.Created_At, &findPost.Updated_At, &findPost.Category.Id, &findPost.Category.Title, &findPost.Author.Id, &findPost.Author.Username)
+
+	if err != nil {
+		return entity.PostList{}, err
+	}
+
+	return findPost, nil
 }
