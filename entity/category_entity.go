@@ -8,3 +8,8 @@ type Category struct {
 	Created_At time.Time `json:"created_at"`
 	Updated_At time.Time `json:"updated_at"`
 }
+
+type PostList_Category struct {
+	Id    int    `json:"id"`
+	Title string `json:"title"`
+}

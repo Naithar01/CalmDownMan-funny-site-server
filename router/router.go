@@ -56,7 +56,7 @@ func InitialApp() *gin.Engine {
 				c.JSON(http.StatusBadRequest, err.Error())
 			}
 
-			c.JSON(http.StatusOK, map[string][]entity.Post{
+			c.JSON(http.StatusOK, map[string][]entity.PostList{
 				"datas": posts,
 			})
 		})
@@ -85,7 +85,7 @@ func InitialApp() *gin.Engine {
 			})
 
 		})
-		post.PATCH("/:id", func(c *gin.Context) {
+		post.PATCH("/:id", middleware.UserJwtCheckMiddleware, func(c *gin.Context) {
 			var post dto.UpdatePostDto
 
 			if err := c.BindJSON(&post); err != nil {
@@ -110,7 +110,7 @@ func InitialApp() *gin.Engine {
 				"updated_post_id": int(updated_post_id),
 			})
 		})
-		post.DELETE("/:id", func(c *gin.Context) {
+		post.DELETE("/:id", middleware.UserJwtCheckMiddleware, func(c *gin.Context) {
 			id := c.Param("id")
 			Id, err := strconv.Atoi(id)
 
