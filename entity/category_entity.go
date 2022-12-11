@@ -1,6 +1,10 @@
 package entity
 
-import "time"
+import (
+	"time"
+
+	"github.com/Naithar01/CalmDownMan-funny-site-server/database"
+)
 
 type Category struct {
 	Id         int       `json:"id"`
@@ -12,4 +16,14 @@ type Category struct {
 type PostList_Category struct {
 	Id    int    `json:"id"`
 	Title string `json:"title"`
+}
+
+func (p_c *PostList_Category) GetCategoryInfo(category_id int) error {
+	err := database.Database.QueryRow("SELECT id, title FROM category WHERE id=?", category_id).Scan(&p_c.Id, &p_c.Title)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

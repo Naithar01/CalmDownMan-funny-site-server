@@ -1,6 +1,10 @@
 package entity
 
-import "time"
+import (
+	"time"
+
+	"github.com/Naithar01/CalmDownMan-funny-site-server/database"
+)
 
 type User struct {
 	Id         int       `json:"id"`
@@ -13,4 +17,14 @@ type User struct {
 type PostList_Author struct {
 	Id       int    `json:"id"`
 	Username string `json:"username"`
+}
+
+func (p_a *PostList_Author) GetCategoryInfo(category_id int) error {
+	err := database.Database.QueryRow("SELECT id, username FROM user WHERE id=?", category_id).Scan(&p_a.Id, &p_a.Username)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

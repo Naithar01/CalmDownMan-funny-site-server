@@ -42,29 +42,15 @@ func (p postService) GetAllPost() ([]entity.PostList, error) {
 		var author entity.PostList_Author
 
 		rows.Scan(&check_post.Id, &check_post.Title, &check_post.Content, &check_post.Category_id, &check_post.Author_id, &check_post.Created_At, &check_post.Updated_At)
+		
+		category.GetCategoryInfo(check_post.Category_id)
+		author.GetCategoryInfo(check_post.Author_id)
 
 		post.Id = check_post.Id
 		post.Title = check_post.Title
 		post.Content = check_post.Content
-
-		// append Category Code
-		err := database.Database.QueryRow("SELECT id, title FROM category WHERE id=?", check_post.Category_id).Scan(&category.Id, &category.Title)
-
-		if err != nil {
-			return []entity.PostList{}, err
-		}
-
 		post.Category = category
-
-		// append Author Code
-		err = database.Database.QueryRow("SELECT id, username FROM user WHERE id=?", check_post.Author_id).Scan(&author.Id, &author.Username)
-
-		if err != nil {
-			return []entity.PostList{}, err
-		}
-
 		post.Author = author
-
 		post.Created_At = check_post.Created_At
 		post.Updated_At = check_post.Updated_At
 
