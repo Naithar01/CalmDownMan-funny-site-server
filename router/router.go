@@ -50,32 +50,30 @@ func InitialApp() *gin.Engine {
 	// post.Use(middleware.UserJwtCheckMiddleware)
 	{
 		post.GET("/", func(c *gin.Context) {
-			// Category Query {category}
-			category_query := c.Query("category")
-			// Postid Query {postid}
-			postid_query := c.Query("postid")
+			posts, err := postController.GetAllPost()
 
-			if category_query == "" || postid_query == "" {
-				posts, err := postController.GetAllPost()
-
-				if err != nil {
-					c.JSON(http.StatusBadRequest, err.Error())
-				}
-
-				c.JSON(http.StatusOK, map[string][]entity.PostList{
-					"datas": posts,
-				})
-			} else {
-				post, err := postController.FindPost(category_query, postid_query)
-
-				if err != nil {
-					c.JSON(http.StatusBadRequest, err.Error())
-				}
-
-				c.JSON(http.StatusOK, map[string]entity.PostList{
-					"data": post,
-				})
+			if err != nil {
+				c.JSON(http.StatusBadRequest, err.Error())
 			}
+
+			c.JSON(http.StatusOK, map[string][]entity.PostList{
+				"datas": posts,
+			})
+		})
+		post.GET("/:category/:postid", func(c *gin.Context) {
+			category := c.Param("category")
+			postid := c.Param("postid")
+
+			post, err := postController.FindPost(category, postid)
+
+			if err != nil {
+				c.JSON(http.StatusBadRequest, err.Error())
+			}
+
+			c.JSON(http.StatusOK, map[string]entity.PostList{
+				"data": post,
+			})
+
 		})
 		post.POST("/", middleware.UserJwtCheckMiddleware, func(c *gin.Context) {
 			var post dto.CreatePostDto

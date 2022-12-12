@@ -36,6 +36,7 @@ func (p postService) GetAllPost() ([]entity.PostList, error) {
 	var posts []entity.PostList
 
 	for rows.Next() {
+		// Inner Join 코드로 변경해야함 22.12.11
 		var post entity.PostList
 		var check_post entity.Post
 
