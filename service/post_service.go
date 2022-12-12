@@ -25,7 +25,7 @@ func NewPostService() PostService {
 }
 
 func (p postService) GetAllPost() ([]entity.PostList, error) {
-	rows, err := database.Database.Query("SELECT * FROM post")
+	rows, err := database.Database.Query("SELECT p.id, p.title, p.content, p.view, p.created_at, p.updated_at ,c.id ,c.title, u.id, u.username FROM post AS p INNER JOIN category AS c ON p.category_id = c.id INNER JOIN user AS u ON p.author_id = u.id")
 
 	defer rows.Close()
 
@@ -36,26 +36,9 @@ func (p postService) GetAllPost() ([]entity.PostList, error) {
 	var posts []entity.PostList
 
 	for rows.Next() {
-		// Inner Join 코드로 변경해야함 22.12.11
 		var post entity.PostList
-		var check_post entity.Post
 
-		var category entity.PostList_Category
-		var author entity.PostList_Author
-
-		rows.Scan(&check_post.Id, &check_post.Title, &check_post.Content, &check_post.View, &check_post.Category_id, &check_post.Author_id, &check_post.Created_At, &check_post.Updated_At)
-
-		category.GetCategoryInfo(check_post.Category_id)
-		author.GetCategoryInfo(check_post.Author_id)
-
-		post.Id = check_post.Id
-		post.Title = check_post.Title
-		post.Content = check_post.Content
-		post.View = check_post.View
-		post.Category = category
-		post.Author = author
-		post.Created_At = check_post.Created_At
-		post.Updated_At = check_post.Updated_At
+		rows.Scan(&post.Id, &post.Title, &post.Content, &post.View, &post.Created_At, &post.Updated_At, &post.Category.Id, &post.Category.Title, &post.Author.Id, &post.Author.Username)
 
 		posts = append(posts, post)
 	}
