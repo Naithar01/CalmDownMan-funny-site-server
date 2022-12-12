@@ -12,6 +12,7 @@ type PostController interface {
 	UpdatePost(id int, post dto.UpdatePostDto) (int64, error)
 	DeletePost(id int) (int64, error)
 	FindPost(category, postid string) (entity.PostList, error)
+	FindPostByCategory(category string) ([]entity.PostList, error)
 }
 
 type postController struct {
@@ -42,4 +43,8 @@ func (p postController) DeletePost(id int) (int64, error) {
 
 func (p postController) FindPost(category, postid string) (entity.PostList, error) {
 	return p.postService.FindPost(category, postid)
+}
+
+func (p postController) FindPostByCategory(category string) ([]entity.PostList, error) {
+	return p.postService.FindPostByCategory(category)
 }

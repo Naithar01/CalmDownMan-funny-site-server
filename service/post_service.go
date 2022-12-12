@@ -12,6 +12,7 @@ type PostService interface {
 	UpdatePost(id int, post dto.UpdatePostDto) (int64, error)
 	DeletePost(id int) (int64, error)
 	FindPost(category, postid string) (entity.PostList, error)
+	FindPostByCategory(category string) ([]entity.PostList, error)
 }
 
 type postService struct {
@@ -48,7 +49,6 @@ func (p postService) GetAllPost() ([]entity.PostList, error) {
 	}
 
 	return posts, nil
-
 }
 
 func (p postService) CreatePost(post dto.CreatePostDto, userid int) (int, error) {
@@ -118,4 +118,31 @@ func (p postService) FindPost(category, postid string) (entity.PostList, error) 
 	}
 
 	return findPost, nil
+}
+func (p postService) FindPostByCategory(category string) ([]entity.PostList, error) {
+
+	rows, err := database.Database.Query("SELECT p.id, p.title, p.content, p.view, p.created_at, p.updated_at ,c.id ,c.title, u.id, u.username FROM post AS p INNER JOIN category AS c ON p.category_id = c.id INNER JOIN user AS u ON p.author_id = u.id WHERE c.title = ?", category)
+
+	defer rows.Close()
+
+	if err != nil {
+		return []entity.PostList{}, err
+	}
+
+	var posts []entity.PostList
+
+	for rows.Next() {
+		var post entity.PostList
+
+		rows.Scan(&post.Id, &post.Title, &post.Content, &post.View, &post.Created_At, &post.Updated_At, &post.Category.Id, &post.Category.Title, &post.Author.Id, &post.Author.Username)
+
+		posts = append(posts, post)
+	}
+
+	if err := rows.Err(); err != nil {
+		return []entity.PostList{}, err
+	}
+
+	return posts, nil
+
 }

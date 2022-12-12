@@ -60,6 +60,19 @@ func InitialApp() *gin.Engine {
 				"datas": posts,
 			})
 		})
+		post.GET("/:category", func(c *gin.Context) {
+			category := c.Param("category")
+
+			posts, err := postController.FindPostByCategory(category)
+
+			if err != nil {
+				c.JSON(http.StatusBadRequest, err.Error())
+			}
+
+			c.JSON(http.StatusOK, map[string][]entity.PostList{
+				"datas": posts,
+			})
+		})
 		post.GET("/:category/:postid", func(c *gin.Context) {
 			category := c.Param("category")
 			postid := c.Param("postid")
