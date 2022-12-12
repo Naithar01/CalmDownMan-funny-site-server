@@ -20,6 +20,8 @@ CREATE TABLE ngletutor.post (
     id INT NOT NULL AUTO_INCREMENT,
     title VARCHAR(30) NOT NULL, 
     content TEXT NOT NULL,
+    -- view Default: 0 
+    view INT, 
     category_id INT NOT NULL,
     author_id INT NOT NULL,
     created_at timestamp not null default current_timestamp,
